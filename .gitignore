@@ -1,0 +1,5 @@
+.terraform
+*.tf
+*.tfstate*
+terraform
+terraform-provider-proxmox
