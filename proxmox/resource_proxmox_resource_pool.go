@@ -2,17 +2,18 @@ package proxmoxprovider
 
 import (
   "fmt"
+  "log"
 
 	"github.com/hashicorp/terraform/helper/schema"
   "github.com/FireDrunk/go-proxmox"
 )
 
-func dataSourceProxmoxResourcePool() *schema.Resource {
+func resourceProxmoxResourcePool() *schema.Resource {
 	return &schema.Resource{
-		Create:     dataSourceProxmoxResourcePoolCreate,
-    Read:       dataSourceProxmoxResourcePoolRead,
-    Update:     dataSourceProxmoxResourcePoolCreate,
-    Delete:     dataSourceProxmoxResourcePoolDelete,
+		Create:     resourceProxmoxResourcePoolCreate,
+    Read:       resourceProxmoxResourcePoolRead,
+    Update:     resourceProxmoxResourcePoolUpdate,
+    Delete:     resourceProxmoxResourcePoolDelete,
 
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -30,9 +31,11 @@ func dataSourceProxmoxResourcePool() *schema.Resource {
 	}
 }
 
-func dataSourceProxmoxResourcePoolCreate(d *schema.ResourceData, _ interface{}) error {
+func resourceProxmoxResourcePoolCreate(d *schema.ResourceData, _ interface{}) error {
   name := d.Get("name").(string)
   comment := d.Get("comment").(string)
+
+  log.Print("Create method executed!")
 
   proxmoxClient, err := proxmox.NewProxMox("10.0.2.15:8006", "root", "password")
   if err != nil {
@@ -51,7 +54,11 @@ func dataSourceProxmoxResourcePoolCreate(d *schema.ResourceData, _ interface{}) 
   return nil
 }
 
-func dataSourceProxmoxResourcePoolRead(d *schema.ResourceData, meta interface{}) error {
+func resourceProxmoxResourcePoolRead(d *schema.ResourceData, _ interface{}) error {
+  log.Print("Read method executed!")
+
+  var found bool
+
   name := d.Get("name").(string)
 
   proxmoxClient, error := proxmox.NewProxMox("10.0.2.15:8006", "root", "password")
@@ -59,20 +66,49 @@ func dataSourceProxmoxResourcePoolRead(d *schema.ResourceData, meta interface{})
     return error
   }
 
-  pools, error := proxmoxClient.Pools()
-  if error != nil {
-    return error
+  log.Fatal("proxmox-resource-pool-read called")
+
+  pools, err := proxmoxClient.Pools()
+  if err != nil {
+    return fmt.Errorf("Error retrieving pools: %s", err)
   }
 
   for _, pool := range pools {
     if pool.Poolid == name {
-      d.SetId(name)
+      found = true
+      d.SetId(pool.Poolid)
     }
   }
+
+  if !found {
+    d.SetId("")
+  }
+
   return nil
 }
 
-func dataSourceProxmoxResourcePoolDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceProxmoxResourcePoolUpdate(d *schema.ResourceData, _ interface{}) error {
+  name := d.Get("name").(string)
+  comment := d.Get("comment").(string)
+
+  proxmoxClient, err := proxmox.NewProxMox("10.0.2.15:8006", "root", "password")
+  if err != nil {
+    fmt.Printf("Error: %s", err)
+    return err
+  }
+
+  result, err := proxmoxClient.UpdatePool(name, comment)
+  if err != nil {
+    fmt.Printf("Error: %s", err)
+    return err
+  }
+
+  fmt.Printf("Result: %s", result)
+
+  return nil
+}
+
+func resourceProxmoxResourcePoolDelete(d *schema.ResourceData, meta interface{}) error {
   name := d.Get("name").(string)
 
   proxmoxClient, err := proxmox.NewProxMox("10.0.2.15:8006", "root", "password")

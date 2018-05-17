@@ -16,11 +16,10 @@ func Provider() terraform.ResourceProvider {
 		Schema: map[string]*schema.Schema{},
 
 		ResourcesMap: map[string]*schema.Resource{
-		  "proxmox_resource_pool": dataSourceProxmoxResourcePool(),
+		  "proxmox_resource_pool": resourceProxmoxResourcePool(),
 		},
 
-		// DataSourcesMap: map[string]*schema.Resource{
-		//
-		// },
+		DataSourcesMap: map[string]*schema.Resource{
+		},
 	}
 }
