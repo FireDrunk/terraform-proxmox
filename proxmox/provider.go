@@ -13,13 +13,13 @@ import (
 func Provider() terraform.ResourceProvider {
   fmt.Println("initializing provider")
   return &schema.Provider{
-		Schema: map[string]*schema.Schema{},
+    Schema: map[string]*schema.Schema{},
 
-		ResourcesMap: map[string]*schema.Resource{
-		  "proxmox_resource_pool": resourceProxmoxResourcePool(),
-		},
+    ResourcesMap: map[string]*schema.Resource{
+      "proxmox_resource_pool": resourceProxmoxResourcePool(),
+    },
 
-		DataSourcesMap: map[string]*schema.Resource{
-		},
-	}
+    DataSourcesMap: map[string]*schema.Resource{
+    },
+  }
 }

@@ -4,31 +4,31 @@ import (
   "fmt"
   "log"
 
-	"github.com/hashicorp/terraform/helper/schema"
+  "github.com/hashicorp/terraform/helper/schema"
   "github.com/FireDrunk/go-proxmox"
 )
 
 func resourceProxmoxResourcePool() *schema.Resource {
-	return &schema.Resource{
-		Create:     resourceProxmoxResourcePoolCreate,
-    Read:       resourceProxmoxResourcePoolRead,
-    Update:     resourceProxmoxResourcePoolUpdate,
-    Delete:     resourceProxmoxResourcePoolDelete,
+  return &schema.Resource{
+    Create:     resourceProxmoxResourcePoolCreate,
+      Read:       resourceProxmoxResourcePoolRead,
+      Update:     resourceProxmoxResourcePoolUpdate,
+      Delete:     resourceProxmoxResourcePoolDelete,
 
-		Schema: map[string]*schema.Schema{
-			"name": {
-				Type:        schema.TypeString,
-				Description: "The name of the resource pool.",
+    Schema: map[string]*schema.Schema{
+      "name": {
+        Type:        schema.TypeString,
+        Description: "The name of the resource pool.",
         Required:    true,
-				Optional:    false,
-			},
+        Optional:    false,
+      },
       "comment": {
-				Type:        schema.TypeString,
-				Description: "The comment of the resource pool.",
-				Optional:    true,
-			},
-		},
-	}
+        Type:        schema.TypeString,
+        Description: "The comment of the resource pool.",
+        Optional:    true,
+      },
+    },
+  }
 }
 
 func resourceProxmoxResourcePoolCreate(d *schema.ResourceData, _ interface{}) error {
